@@ -4,6 +4,9 @@
 #[cfg(feature = "with-serde")]
 use serde_derive::{Deserialize, Serialize};
 
+#[cfg(feature = "fam-wrappers")]
+mod fam_wrappers;
+
 // Export 4.14 bindings when the feature kvm-v4_20_0 is not specified.
 #[cfg(all(feature = "kvm-v4_14_0", not(feature = "kvm-v4_20_0")))]
 #[allow(clippy::all)]
@@ -27,6 +30,9 @@ pub mod bindings {
         all(not(feature = "kvm-v4_14_0"), not(feature = "kvm-v4_20_0"))
     ))]
     pub use super::bindings_v4_20_0::*;
+
+    #[cfg(feature = "fam-wrappers")]
+    pub use super::fam_wrappers::*;
 }
 
 #[cfg_attr(feature = "with-serde", derive(Deserialize, Serialize))]
