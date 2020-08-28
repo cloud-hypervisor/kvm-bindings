@@ -1,3 +1,4 @@
+// Copyright 2020 Arm Limited (or its affiliates). All rights reserved.
 // Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -66,7 +67,10 @@ mod tests {
     #[cfg(feature = "with-serde")]
     extern crate serde_json;
 
-    use super::{Version, VERSION};
+    use super::VERSION;
+
+    #[cfg(feature = "with-serde")]
+    use super::bindings::*;
 
     #[test]
     fn test_version() {
@@ -80,5 +84,49 @@ mod tests {
         assert_eq!(VERSION.kernel_ver, "v4.20.0");
 
         assert_eq!(VERSION.crate_ver, env!("CARGO_PKG_VERSION"));
+    }
+
+    #[test]
+    #[cfg(feature = "with-serde")]
+    fn test_ser_deser() {
+        {
+            // Test user_pt_regs ser/deser.
+            let val = user_pt_regs::default();
+            let val_ser = serde_json::to_string(&val).unwrap();
+            let val_deser = serde_json::from_str::<user_pt_regs>(val_ser.as_str()).unwrap();
+            assert_eq!(val, val_deser);
+        }
+
+        {
+            // Test user_fpsimd_state ser/deser.
+            let val = user_fpsimd_state::default();
+            let val_ser = serde_json::to_string(&val).unwrap();
+            let val_deser = serde_json::from_str::<user_fpsimd_state>(val_ser.as_str()).unwrap();
+            assert_eq!(val, val_deser);
+        }
+
+        {
+            // Test kvm_regs ser/deser.
+            let val = kvm_regs::default();
+            let val_ser = serde_json::to_string(&val).unwrap();
+            let val_deser = serde_json::from_str::<kvm_regs>(val_ser.as_str()).unwrap();
+            assert_eq!(val, val_deser);
+        }
+
+        {
+            // Test kvm_mp_state ser/deser.
+            let val = kvm_mp_state::default();
+            let val_ser = serde_json::to_string(&val).unwrap();
+            let val_deser = serde_json::from_str::<kvm_mp_state>(val_ser.as_str()).unwrap();
+            assert_eq!(val, val_deser);
+        }
+
+        {
+            // Test kvm_one_reg ser/deser.
+            let val = kvm_one_reg::default();
+            let val_ser = serde_json::to_string(&val).unwrap();
+            let val_deser = serde_json::from_str::<kvm_one_reg>(val_ser.as_str()).unwrap();
+            assert_eq!(val, val_deser);
+        }
     }
 }
