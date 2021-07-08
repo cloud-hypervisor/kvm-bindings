@@ -7,29 +7,11 @@ mod fam_wrappers;
 #[cfg(feature = "with-serde")]
 use serde_derive::{Deserialize, Serialize};
 
-// Export 4.14 bindings when the feature kvm-v4_20_0 is not specified.
-#[cfg(all(feature = "kvm-v4_14_0", not(feature = "kvm-v4_20_0")))]
 #[allow(clippy::all)]
-mod bindings_v4_14_0;
-
-// Export 4.20 bindings when kvm-v4_20_0 is specified or no kernel version
-// related features are specified.
-#[cfg(any(
-    feature = "kvm-v4_20_0",
-    all(not(feature = "kvm-v4_14_0"), not(feature = "kvm-v4_20_0"))
-))]
-#[allow(clippy::all)]
-mod bindings_v4_20_0;
+mod bindings_v5_13_0;
 
 pub mod bindings {
-    #[cfg(all(feature = "kvm-v4_14_0", not(feature = "kvm-v4_20_0")))]
-    pub use super::bindings_v4_14_0::*;
-
-    #[cfg(any(
-        feature = "kvm-v4_20_0",
-        all(not(feature = "kvm-v4_14_0"), not(feature = "kvm-v4_20_0"))
-    ))]
-    pub use super::bindings_v4_20_0::*;
+    pub use super::bindings_v5_13_0::*;
 
     #[cfg(feature = "fam-wrappers")]
     pub use super::fam_wrappers::*;
@@ -51,12 +33,7 @@ pub struct Version {
 static VERSION: Version = Version {
     arch: "aarch64",
 
-    #[cfg(feature = "kvm-v4_14_0")]
-    kernel_ver: "v4.14.0",
-    #[cfg(feature = "kvm-v4_20_0")]
-    kernel_ver: "v4.20.0",
-    #[cfg(all(not(feature = "kvm-v4_14_0"), not(feature = "kvm-v4_20_0")))]
-    kernel_ver: "v4.20.0",
+    kernel_ver: "v5.13.0",
 
     crate_ver: env!("CARGO_PKG_VERSION"),
 };
@@ -75,12 +52,7 @@ mod tests {
     fn test_version() {
         assert_eq!(VERSION.arch, "aarch64");
 
-        #[cfg(feature = "kvm-v4_14_0")]
-        assert_eq!(VERSION.kernel_ver, "v4.14.0");
-        #[cfg(feature = "kvm-v4_20_0")]
-        assert_eq!(VERSION.kernel_ver, "v4.20.0");
-        #[cfg(all(not(feature = "kvm-v4_14_0"), not(feature = "kvm-v4_20_0")))]
-        assert_eq!(VERSION.kernel_ver, "v4.20.0");
+        assert_eq!(VERSION.kernel_ver, "v5.13.0");
 
         assert_eq!(VERSION.crate_ver, env!("CARGO_PKG_VERSION"));
     }
